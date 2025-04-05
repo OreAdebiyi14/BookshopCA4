@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="text-center mb-4">
+    <h1 class="display-4">Welcome to the Bookshop</h1>
+    {% if current_user.is_authenticated %}
+      <p class="lead">Hello, {{ current_user.full_name }}!</p>
+      {% if current_user.is_admin %}
+        <a href="{{ url_for('main.admin_books') }}" class="btn btn-primary mb-2">Manage Books</a>
+      {% endif %}
+      <a href="{{ url_for('main.logout') }}" class="btn btn-outline-danger">Logout</a>
+    {% else %}
+      <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
+      <a href="{{ url_for('main.register') }}" class="btn btn-outline-secondary">Register</a>
+    {% endif %}
+  </div>
+
+  <h2 class="mb-3">Books Available</h2>
+  <div class="row">
+    {% for book in books %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        {% if book.image_url %}
+        <img src="{{ book.image_url }}" class="card-img-top" alt="{{ book.title }}">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ book.title }}</h5>
+          <p class="card-text"><strong>Author:</strong> {{ book.author }}</p>
+          <p class="card-text"><strong>Category:</strong> {{ book.category }}</p>
+          <p class="card-text"><strong>Price:</strong> €{{ book.price }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

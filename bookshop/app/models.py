@@ -1,22 +1,23 @@
-# This is where the database models and queries will go.
-
 from flask_login import UserMixin
-from . import mysql
+from . import db
 
-class User(UserMixin):
-    def __init__(self, id, full_name, email, password_hash, is_admin):
-        self.id = id
-        self.full_name = full_name
-        self.email = email
-        self.password_hash = password_hash
-        self.is_admin = is_admin
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
-def load_user(user_id):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
-    user = cur.fetchone()
-    cur.close()
-
-    if user:
-        return User(*user)
-    return None
+class Book(db.Model):
+    __tablename__ = 'books'
+    book_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    author = db.Column(db.String(255))
+    publisher = db.Column(db.String(255))
+    price = db.Column(db.Numeric(10, 2))
+    category = db.Column(db.String(100))
+    isbn = db.Column(db.String(20))
+    image_url = db.Column(db.String(255))
+    stock_quantity = db.Column(db.Integer)
+    description = db.Column(db.Text)

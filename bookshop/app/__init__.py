@@ -1,20 +1,25 @@
 from flask import Flask
-from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .models import load_user
 
-mysql = MySQL()
+db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.user_loader(load_user)
 
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('../config.py')
 
-    mysql.init_app(app)
+    db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = 'main.login'
 
     from .routes import main
     app.register_blueprint(main)
 
     return app
+
+from .models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
