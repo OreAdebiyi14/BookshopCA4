@@ -1,13 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Add/Edit Book</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  {{ form.title.label }}<br>{{ form.title(size=32) }}<br>
-  {{ form.author.label }}<br>{{ form.author(size=32) }}<br>
-  {{ form.price.label }}<br>{{ form.price() }}<br>
-  {{ form.stock.label }}<br>{{ form.stock() }}<br>
-  {{ form.description.label }}<br>{{ form.description(rows=4, cols=40) }}<br>
-  {{ form.submit() }}
-</form>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2 class="mb-4">Add / Edit Book</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">{{ form.title.label }}{{ form.title(class="form-control") }}</div>
+      <div class="mb-3">{{ form.author.label }}{{ form.author(class="form-control") }}</div>
+      <div class="mb-3">{{ form.publisher.label }}{{ form.publisher(class="form-control") }}</div>
+      <div class="mb-3">{{ form.price.label }}{{ form.price(class="form-control") }}</div>
+      <div class="mb-3">{{ form.category.label }}{{ form.category(class="form-control") }}</div>
+      <div class="mb-3">{{ form.isbn.label }}{{ form.isbn(class="form-control") }}</div>
+      <div class="mb-3">{{ form.image_url.label }}{{ form.image_url(class="form-control") }}</div>
+      <div class="mb-3">{{ form.stock_quantity.label }}{{ form.stock_quantity(class="form-control") }}</div>
+      <div class="mb-3">{{ form.description.label }}{{ form.description(class="form-control", rows="4") }}</div>
+      <div class="mb-3">{{ form.submit(class="btn btn-primary") }}</div>
+    </form>
+  </div>
+</div>
 {% endblock %}
