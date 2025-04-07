@@ -76,20 +76,22 @@ def add_book():
     if not current_user.is_admin:
         flash("Access denied", "danger")
         return redirect(url_for('main.home'))
+    
     form = BookForm()
     if form.validate_on_submit():
-        book = Book(
+        new_book = Book(
             title=form.title.data,
             author=form.author.data,
             price=form.price.data,
-            stock=form.stock.data,
+            stock_quantity=form.stock_quantity.data,
             description=form.description.data
         )
-        db.session.add(book)
+        db.session.add(new_book)
         db.session.commit()
-        flash("Book added successfully", "success")
+        flash("Book added successfully!", "success")
         return redirect(url_for('main.admin_books'))
-    return render_template('book_form.html', form=form)
+    
+    return render_template("add_book.html", form=form)
 
 @main.route('/admin/books/delete/<int:book_id>')
 @login_required

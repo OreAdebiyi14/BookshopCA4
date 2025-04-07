@@ -21,6 +21,6 @@ class BookForm(FlaskForm):
     title = StringField('Title', validators=[InputRequired()])
     author = StringField('Author', validators=[InputRequired()])
     price = FloatField('Price', validators=[InputRequired()])
-    stock = IntegerField('Stock', validators=[InputRequired()])
+    stock_quantity = IntegerField('Stock quantity', validators=[InputRequired()])
     description = TextAreaField('Description')
     submit = SubmitField('Add Book')
