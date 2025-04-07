@@ -26,12 +26,16 @@ def register():
         new_user = User(
             full_name=form.full_name.data,
             email=form.email.data,
-            password_hash=hashed_password
+            password_hash=hashed_password,
+            is_admin=form.is_admin.data
         )
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful. Please login.', 'success')
         return redirect(url_for('main.login'))
+    if form.is_admin.data and form.admin_code.data.strip() != "admin123":
+        flash("Invalid admin access code", "danger")
+        return render_template("register.html", form=form)
 
     return render_template('register.html', form=form)
 
@@ -41,8 +45,11 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
+            if form.is_admin.data and not user.is_admin:
+                flash("This account is not an admin!", "danger")
+                return redirect(url_for('main.login'))
             login_user(user)
-            flash('Logged in successfully.', 'success')
+            flash('Login successful!', 'success')
             return redirect(url_for('main.home'))
         flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
@@ -95,3 +102,4 @@ def delete_book(book_id):
     db.session.commit()
     flash("Book deleted", "info")
     return redirect(url_for('main.admin_books'))
+

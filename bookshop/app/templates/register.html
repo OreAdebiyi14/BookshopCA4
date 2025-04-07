@@ -9,8 +9,28 @@
       <div class="mb-3">{{ form.email.label }}{{ form.email(class="form-control") }}</div>
       <div class="mb-3">{{ form.password.label }}{{ form.password(class="form-control") }}</div>
       <div class="mb-3">{{ form.confirm_password.label }}{{ form.confirm_password(class="form-control") }}</div>
+      <div class="mb-3">
+        {{ form.admin_code.label }}
+        {{ form.admin_code(class="form-control", id="admin_code") }}
+      </div>
+      <div class="mb-3 form-check">
+        {{ form.is_admin(class="form-check-input") }}
+        {{ form.is_admin.label(class="form-check-label") }}
+      </div>
       <div class="mb-3">{{ form.submit(class="btn btn-primary") }}</div>
     </form>
+    <script>
+      const adminInput = document.getElementById("admin_code");
+      const adminBox = document.getElementById("admin_checkbox");
+    
+      adminInput.addEventListener("input", function () {
+        if (adminInput.value.trim() === "admin123") {
+          adminBox.style.display = "block";
+        } else {
+          adminBox.style.display = "none";
+        }
+      });
+    </script>
     <p>Already registered? <a href="{{ url_for('main.login') }}">Login here</a>.</p>
   </div>
 </div>

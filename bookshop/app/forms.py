@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField, IntegerField, StringField, PasswordField, SubmitField, TextAreaField
+from wtforms import BooleanField, FloatField, IntegerField, StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import InputRequired, Email, Length, EqualTo
 
 class RegisterForm(FlaskForm):
@@ -7,11 +7,14 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired(), EqualTo('password')])
+    admin_code = StringField('Admin Access Code')
+    is_admin = BooleanField('Register as Admin')
     submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     password = PasswordField('Password', validators=[InputRequired()])
+    is_admin = BooleanField('Login as Admin')
     submit = SubmitField('Login')
 
 class BookForm(FlaskForm):
@@ -20,4 +23,4 @@ class BookForm(FlaskForm):
     price = FloatField('Price', validators=[InputRequired()])
     stock = IntegerField('Stock', validators=[InputRequired()])
     description = TextAreaField('Description')
-    submit = SubmitField('Save Book')
+    submit = SubmitField('Add Book')
