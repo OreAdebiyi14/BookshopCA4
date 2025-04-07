@@ -24,3 +24,37 @@ class Book(db.Model):
     image_url = db.Column(db.String(255))
     stock_quantity = db.Column(db.Integer)
     description = db.Column(db.Text)
+
+class CartItem(db.Model):
+    __tablename__ = 'CartItems'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    user = db.relationship('User', backref='cart_items')
+    book = db.relationship('Book')
+
+class Order(db.Model):
+    __tablename__ = 'Orders'
+    order_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+    address_id = db.Column(db.Integer, db.ForeignKey('Addresses.address_id'))
+    payment_id = db.Column(db.Integer, db.ForeignKey('Payments.payment_id'))
+    order_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
+    total_price = db.Column(db.Numeric(10, 2))
+    status = db.Column(db.String(50))
+
+    user = db.relationship('User', backref='orders')
+    items = db.relationship('Item', backref='order', cascade='all, delete-orphan')
+
+
+class Item(db.Model):
+    __tablename__ = 'Items'
+    order_item_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('Orders.order_id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'))
+    quantity = db.Column(db.Integer)
+    price_at_purchase = db.Column(db.Numeric(10, 2))
+
+    book = db.relationship('Book')

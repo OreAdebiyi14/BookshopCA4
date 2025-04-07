@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Order Confirmation</h2>
+  <p class="text-success">Thank you for your order!</p>
+  <p><strong>Order Number:</strong> {{ order.order_id }}</p>
+  <p><strong>Status:</strong> {{ order.status }}</p>
+  <p><strong>Date:</strong> {{ order.order_date.strftime('%d %B %Y %H:%M') }}</p>
+
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set total = 0 %}
+      {% for item in items %}
+        {% set subtotal = item.price_at_purchase * item.quantity %}
+        {% set total = total + subtotal %}
+        <tr>
+          <td>{{ item.book.title }}</td>
+          <td>€{{ item.price_at_purchase }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>€{{ '%.2f' % subtotal }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h4 class="text-end">Total Paid: €{{ '%.2f' % total }}</h4>
+</div>
+{% endblock %}

@@ -20,6 +20,7 @@
       <td>€{{ book.price }}</td>
       <td>{{ book.stock_quantity }}</td>
       <td>
+        <a href="{{ url_for('main.edit_book', book_id=book.book_id) }}" class="btn btn-sm btn-warning">Edit</a>
         <a href="{{ url_for('main.delete_book', book_id=book.book_id) }}" class="btn btn-sm btn-danger">Delete</a>
       </td>
     </tr>

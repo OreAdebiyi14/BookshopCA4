@@ -15,8 +15,11 @@
           {% if current_user.is_authenticated %}
             <li class="nav-item"><a class="nav-link" href="#">{{ current_user.full_name }}</a></li>
             {% if current_user.is_admin %}
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_books') }}">Manage Books</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_books') }}">Manage Books</a></li>
             {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.view_cart') }}">Cart</a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a></li>
           {% else %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('main.login') }}">Login</a></li>
