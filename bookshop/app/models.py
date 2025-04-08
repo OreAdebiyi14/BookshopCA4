@@ -48,6 +48,10 @@ class Order(db.Model):
     user = db.relationship('User', backref='orders')
     items = db.relationship('Item', backref='order', cascade='all, delete-orphan')
 
+    @property
+    def total(self):
+        return sum(item.price_at_purchase * item.quantity for item in self.items)
+
 
 class Item(db.Model):
     __tablename__ = 'Items'

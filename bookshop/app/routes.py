@@ -1,6 +1,5 @@
 from os import abort
-from urllib import request
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import CartItem, Order, User, Book, Item
@@ -132,17 +131,21 @@ def edit_book(book_id):
 @main.route('/cart')
 @login_required
 def view_cart():
-    items = CartItem.query.filter_by(user_id=current_user.user_id).all()
-    return render_template('cart.html', items=items)
+    cart_items = CartItem.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('cart.html', cart_items=cart_items)
 
 @main.route('/cart/add/<int:book_id>', methods=['POST'])
 @login_required
 def add_to_cart(book_id):
-    existing = CartItem.query.filter_by(user_id=current_user.user_id, book_id=book_id).first()
+    existing = CartItem.query.filter_by(
+        user_id=current_user.user_id, 
+        book_id=book_id).first()
     if existing:
         existing.quantity += 1
     else:
-        new_item = CartItem(user_id=current_user.user_id, book_id=book_id, quantity=1)
+        new_item = CartItem(
+            user_id=current_user.user_id, 
+            book_id=book_id, quantity=1)
         db.session.add(new_item)
     db.session.commit()
     flash('Book added to cart!')
@@ -160,25 +163,6 @@ def remove_from_cart(item_id):
     flash('Item removed.')
     return redirect(url_for('main.view_cart'))
 
-@main.route('/cart')
-@login_required
-def view_cart():
-    cart_items = CartItem.query.filter_by(user_id=current_user.user_id).all()
-    return render_template('cart.html', cart_items=cart_items)
-
-@main.route('/cart/remove/<int:item_id>', methods=['POST'])
-@login_required
-def remove_from_cart(item_id):
-    item = CartItem.query.get_or_404(item_id)
-    if item.user_id != current_user.user_id:
-        flash("Unauthorized", "danger")
-        return redirect(url_for('main.view_cart'))
-
-    db.session.delete(item)
-    db.session.commit()
-    flash("Item removed from cart.", "success")
-    return redirect(url_for('main.view_cart'))
-
 @main.route('/cart/update/<int:item_id>', methods=['POST'])
 @login_required
 def update_quantity(item_id):
@@ -188,28 +172,18 @@ def update_quantity(item_id):
         return redirect(url_for('main.view_cart'))
 
     try:
-        item.quantity = int(request.form['quantity'])
+        new_quantity = int(request.form.get('quantity'))
+        print(f"Received quantity: {new_quantity}")
+        if new_quantity < 1:
+            db.session.delete(item)
+        else:
+            item.quantity = new_quantity
         db.session.commit()
-        flash("Quantity updated.", "success")
-    except:
-        flash("Invalid quantity.", "danger")
+        flash('Cart updated.', 'success')
+    except Exception as e:
+        flash('Invalid quantity.', 'danger')
+        print(f"Error: {e}")
     return redirect(url_for('main.view_cart'))
-
-@main.route('/cart/checkout', methods=['POST'])
-@login_required
-def checkout():
-    cart_items = CartItem.query.filter_by(user_id=current_user.user_id).all()
-    if not cart_items:
-        flash("Your cart is empty.", "warning")
-        return redirect(url_for('main.view_cart'))
-
-    # Optionally save to Orders table here...
-    for item in cart_items:
-        db.session.delete(item)
-    db.session.commit()
-
-    flash("Checkout successful! Thank you for your order.", "success")
-    return redirect(url_for('main.home'))
 
 @main.route('/checkout', methods=['POST'])
 @login_required
@@ -263,4 +237,11 @@ def order_confirmation(order_id):
         abort(403)
     items = Item.query.filter_by(order_id=order_id).all()
     return render_template('order_confirmation.html', order=order, items=items)
+
+@main.context_processor
+def inject_cart_count():
+    if current_user.is_authenticated:
+        count = CartItem.query.filter_by(user_id=current_user.user_id).count()
+        return {'cart_count': count}
+    return {'cart_count': 0}
 

@@ -31,6 +31,7 @@
         
           {% if current_user.is_authenticated and not current_user.is_admin %}
             <form action="{{ url_for('main.add_to_cart', book_id=book.book_id) }}" method="POST" class="mt-auto">
+              <p>Cart has {{ cart_count }} items</p>
               <button class="btn btn-sm btn-primary">Add to Cart</button>
             </form>
           {% endif %}
