@@ -2,8 +2,8 @@ from os import abort
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import CartItem, Order, User, Book, Item
-from .forms import RegisterForm, LoginForm, BookForm
+from .models import CartItem, Order, Review, User, Book, Item
+from .forms import RegisterForm, LoginForm, BookForm, ReviewForm
 from . import db
 
 main = Blueprint('main', __name__)
@@ -95,6 +95,7 @@ def admin_books():
         return redirect(url_for('main.home'))
     books = Book.query.all()
     return render_template('admin_books.html', books=books)
+
 
 @main.route('/admin/books/add', methods=['GET', 'POST'])
 @login_required
@@ -270,3 +271,50 @@ def inject_cart_count():
         return {'cart_count': count}
     return {'cart_count': 0}
 
+@main.route('/admin/books/<int:book_id>/stock', methods=['POST'])
+@login_required
+def update_stock(book_id):
+    if not current_user.is_admin:
+        abort(403)
+
+    book = Book.query.get_or_404(book_id)
+    try:
+        new_stock = int(request.form.get('stock'))
+        book.stock_quantity = max(new_stock, 0)
+        db.session.commit()
+        flash(f"Stock updated for {book.title}.", "success")
+    except ValueError:
+        flash("Invalid stock number.", "danger")
+
+    return redirect(url_for('main.admin_books'))
+
+@main.route("/books/<int:book_id>/review", methods=["GET", "POST"])
+@login_required
+def review_book(book_id):
+    book = Book.query.get_or_404(book_id)
+    review = Review.query.filter_by(user_id=current_user.user_id, book_id=book_id).first()
+    form = ReviewForm(obj=review)
+
+    if form.validate_on_submit():
+        if review:
+            review.rating = form.rating.data
+            review.comment = form.comment.data
+        else:
+            review = Review(
+                user_id=current_user.user_id,
+                book_id=book_id,
+                rating=form.rating.data,
+                comment=form.comment.data
+            )
+            db.session.add(review)
+
+        db.session.commit()
+        flash("Your review has been submitted!", "success")
+        return redirect(url_for("main.book_details", book_id=book_id))
+
+    return render_template("review_book.html", form=form, book=book, is_edit=bool(review))
+
+@main.route('/books/<int:book_id>')
+def book_details(book_id):
+    book = Book.query.get_or_404(book_id)
+    return render_template('book_details.html', book=book)

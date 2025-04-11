@@ -24,6 +24,7 @@ class Book(db.Model):
     image_url = db.Column(db.String(255))
     stock_quantity = db.Column(db.Integer)
     description = db.Column(db.Text)
+    reviews = db.relationship('Review', backref='book', cascade='all, delete-orphan')
 
 class CartItem(db.Model):
     __tablename__ = 'CartItems'
@@ -52,7 +53,6 @@ class Order(db.Model):
     def total(self):
         return sum(item.price_at_purchase * item.quantity for item in self.items)
 
-
 class Item(db.Model):
     __tablename__ = 'Items'
     order_item_id = db.Column(db.Integer, primary_key=True)
@@ -62,3 +62,15 @@ class Item(db.Model):
     price_at_purchase = db.Column(db.Numeric(10, 2))
 
     book = db.relationship('Book')
+
+class Review(db.Model):
+    __tablename__ = 'Reviews'
+    review_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    user = db.relationship('User')
+    book = db.relationship('Book', backref='reviews')

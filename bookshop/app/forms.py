@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, FloatField, IntegerField, StringField, PasswordField, SubmitField, TextAreaField
-from wtforms.validators import InputRequired, Email, Length, EqualTo
+from wtforms.validators import InputRequired, Email, Length, EqualTo, DataRequired, NumberRange
+
 
 class RegisterForm(FlaskForm):
     full_name = StringField('Full Name', validators=[InputRequired(), Length(min=2, max=100)])
@@ -24,3 +25,8 @@ class BookForm(FlaskForm):
     stock_quantity = IntegerField('Stock quantity', validators=[InputRequired()])
     description = TextAreaField('Description')
     submit = SubmitField('Add Book')
+
+class ReviewForm(FlaskForm):
+    rating = IntegerField("Rating (1–5)", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    comment = TextAreaField("Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit Review")
