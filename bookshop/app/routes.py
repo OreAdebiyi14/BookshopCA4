@@ -1,9 +1,10 @@
+from email.headerregistry import Address
 from os import abort
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import CartItem, Order, Review, User, Book, Item
-from .forms import RegisterForm, LoginForm, BookForm, ReviewForm
+from .models import CartItem, Order, Payment, Review, User, Book, Item
+from .forms import AddressForm, PaymentForm, RegisterForm, LoginForm, BookForm, ReviewForm
 from . import db
 
 main = Blueprint('main', __name__)
@@ -252,69 +253,4 @@ def checkout():
 @main.route("/orders")
 @login_required
 def order_history():
-    orders = Order.query.filter_by(user_id=current_user.user_id).order_by(Order.order_id.desc()).all()
-    return render_template("order_history.html", orders=orders)
-
-@main.route('/order-confirmation/<int:order_id>')
-@login_required
-def order_confirmation(order_id):
-    order = Order.query.get_or_404(order_id)
-    if order.user_id != current_user.user_id and not current_user.is_admin:
-        abort(403)
-    items = Item.query.filter_by(order_id=order_id).all()
-    return render_template('order_confirmation.html', order=order, items=items)
-
-@main.context_processor
-def inject_cart_count():
-    if current_user.is_authenticated:
-        count = CartItem.query.filter_by(user_id=current_user.user_id).count()
-        return {'cart_count': count}
-    return {'cart_count': 0}
-
-@main.route('/admin/books/<int:book_id>/stock', methods=['POST'])
-@login_required
-def update_stock(book_id):
-    if not current_user.is_admin:
-        abort(403)
-
-    book = Book.query.get_or_404(book_id)
-    try:
-        new_stock = int(request.form.get('stock'))
-        book.stock_quantity = max(new_stock, 0)
-        db.session.commit()
-        flash(f"Stock updated for {book.title}.", "success")
-    except ValueError:
-        flash("Invalid stock number.", "danger")
-
-    return redirect(url_for('main.admin_books'))
-
-@main.route("/books/<int:book_id>/review", methods=["GET", "POST"])
-@login_required
-def review_book(book_id):
-    book = Book.query.get_or_404(book_id)
-    review = Review.query.filter_by(user_id=current_user.user_id, book_id=book_id).first()
-    form = ReviewForm(obj=review)
-
-    if form.validate_on_submit():
-        if review:
-            review.rating = form.rating.data
-            review.comment = form.comment.data
-        else:
-            review = Review(
-                user_id=current_user.user_id,
-                book_id=book_id,
-                rating=form.rating.data,
-                comment=form.comment.data
-            )
-            db.session.add(review)
-
-        db.session.commit()
-        flash("Your review has been submitted!", "success")
-        return redirect(url_for("main.book_details", book_id=book_id))
-
-    return render_template("review_book.html", form=form, book=book, is_edit=bool(review))
-
-@main.route('/books/<int:book_id>')
-def book_details(book_id):
-    book = Book.query.get_or_404(book_id)
-    return render_template('book_details.html', book=book)
+    

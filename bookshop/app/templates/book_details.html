@@ -26,14 +26,16 @@
       <div class="border p-2 mb-2">
         <strong>{{ review.user.full_name }}:</strong>
         ⭐ {{ review.rating }}<br>
+        <p class="text-muted small">Reviewed on {{ review.created_at.strftime('%d %B %Y') }}</p>
         <p>{{ review.comment }}</p>
       </div>
     {% endfor %}
   {% else %}
     <p class="text-muted">No reviews yet.</p>
-    <p class="text-muted small">Reviewed on {{ review.created_at.strftime('%d %B %Y') }}</p>
   {% endif %}
-
   <a href="{{ url_for('main.review_book', book_id=book.book_id) }}" class="btn btn-outline-primary">Leave a Review</a>
 </div>
+<div class="mt-4">
+  <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">← Return to Home</a>
+</div>  
 {% endblock %}

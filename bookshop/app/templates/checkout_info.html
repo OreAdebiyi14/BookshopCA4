@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Shipping Address</h2>
+  <form method="POST">
+    {{ address_form.hidden_tag() }}
+    {{ address_form.street.label }} {{ address_form.street(class="form-control mb-2") }}
+    {{ address_form.city.label }} {{ address_form.city(class="form-control mb-2") }}
+    {{ address_form.zip_code.label }} {{ address_form.zip_code(class="form-control mb-2") }}
+    {{ address_form.country.label }} {{ address_form.country(class="form-control mb-2") }}
+
+    <h2 class="mt-4">Payment Info</h2>
+    {{ payment_form.hidden_tag() }}
+    {{ payment_form.card_number.label }} {{ payment_form.card_number(class="form-control mb-2") }}
+    {{ payment_form.expiry_date.label }} {{ payment_form.expiry_date(class="form-control mb-2") }}
+    {{ payment_form.cvv.label }} {{ payment_form.cvv(class="form-control mb-2") }}
+
+    <button class="btn btn-success mt-3">Continue to Cart</button>
+  </form>
+</div>
+{% endblock %}

@@ -59,18 +59,4 @@ class Item(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('Orders.order_id'))
     book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'))
     quantity = db.Column(db.Integer)
-    price_at_purchase = db.Column(db.Numeric(10, 2))
-
-    book = db.relationship('Book')
-
-class Review(db.Model):
-    __tablename__ = 'Reviews'
-    review_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    comment = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-
-    user = db.relationship('User')
-    book = db.relationship('Book', backref='reviews')
+    
