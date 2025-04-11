@@ -15,6 +15,24 @@
     {% endif %}
   </div>
 
+  <form method="GET" action="{{ url_for('main.home') }}" class="row mb-4 g-2">
+    <div class="col-md-4">
+      <input type="text" name="q" class="form-control" placeholder="Search by title, author, publisher, or category" value="{{ request.args.get('q', '') }}">
+    </div>
+    <div class="col-md-3">
+      <select name="sort" class="form-select">
+        <option value="">Sort by...</option>
+        <option value="title_asc" {% if request.args.get('sort') == 'title_asc' %}selected{% endif %}>Title A–Z</option>
+        <option value="title_desc" {% if request.args.get('sort') == 'title_desc' %}selected{% endif %}>Title Z–A</option>
+        <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+        <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+  </form>  
+
   <h2 class="mb-3">Books Available</h2>
   <div class="row">
     {% for book in books %}

@@ -10,9 +10,34 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
-    from .models import Book
-    books = Book.query.all()
-    return render_template('home.html', books=books)
+    query = request.args.get('q', '')
+    sort = request.args.get('sort', '')
+
+    books = Book.query
+
+    if query:
+        search = f"%{query}%"
+        books = books.filter(
+            db.or_(
+                Book.title.ilike(search),
+                Book.author.ilike(search),
+                Book.publisher.ilike(search),
+                Book.category.ilike(search)
+            )
+        )
+
+    # Sorting
+    if sort == 'title_asc':
+        books = books.order_by(Book.title.asc())
+    elif sort == 'title_desc':
+        books = books.order_by(Book.title.desc())
+    elif sort == 'price_asc':
+        books = books.order_by(Book.price.asc())
+    elif sort == 'price_desc':
+        books = books.order_by(Book.price.desc())
+
+    return render_template('home.html', books=books.all())
+
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
