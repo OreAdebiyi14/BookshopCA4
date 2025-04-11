@@ -50,4 +50,18 @@
     <a href="{{ url_for('main.checkout_info') }}" class="btn btn-outline-primary mt-3">Enter Address & Payment Info</a>
 
     {% if address_exists and payment_exists %}
-      <form action="{{ url_for('main.checkout') }}" method="POST" class="text-end mt-3"
+      <form action="{{ url_for('main.checkout') }}" method="POST" class="text-end mt-3">
+        <button class="btn btn-success">Checkout</button>
+      </form>
+    {% else %}
+      <p class="text-warning text-end mt-3">Please enter address and payment info before checking out.</p>
+    {% endif %}
+
+  {% else %}
+    <p class="text-muted">Your cart is empty.</p>
+  {% endif %}
+</div>
+<div class="mt-4">
+  <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">← Return to Home</a>
+</div>
+{% endblock %}

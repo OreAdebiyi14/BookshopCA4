@@ -24,4 +24,22 @@ class BookForm(FlaskForm):
     price = FloatField('Price', validators=[InputRequired()])
     stock_quantity = IntegerField('Stock quantity', validators=[InputRequired()])
     description = TextAreaField('Description')
-    subm
+    submit = SubmitField('Add Book')
+
+class ReviewForm(FlaskForm):
+    rating = IntegerField("Rating (1–5)", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    comment = TextAreaField("Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit Review")
+
+class AddressForm(FlaskForm):
+    street = StringField("Street", validators=[DataRequired()])
+    city = StringField("City", validators=[DataRequired()])
+    zip_code = StringField("Zip Code", validators=[DataRequired()])
+    country = StringField("Country", validators=[DataRequired()])
+    submit = SubmitField("Save Address")
+
+class PaymentForm(FlaskForm):
+    card_number = StringField("Card Number", validators=[DataRequired()])
+    expiry_date = StringField("Expiry Date (MM/YY)", validators=[DataRequired()])
+    cvv = StringField("CVV", validators=[DataRequired()])
+    submit = SubmitField("Save Payment Info")

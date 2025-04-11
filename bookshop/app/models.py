@@ -59,4 +59,38 @@ class Item(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('Orders.order_id'))
     book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'))
     quantity = db.Column(db.Integer)
-    
+    price_at_purchase = db.Column(db.Numeric(10, 2))
+
+    book = db.relationship('Book')
+
+class Review(db.Model):
+    __tablename__ = 'Reviews'
+    review_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('Books.book_id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    user = db.relationship('User')
+
+class Address(db.Model):
+    __tablename__ = 'Addresses'
+    address_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    street = db.Column(db.String(255))
+    city = db.Column(db.String(100))
+    zip_code = db.Column(db.String(20))
+    country = db.Column(db.String(100))
+
+    user = db.relationship('User', backref='addresses')
+
+class Payment(db.Model):
+    __tablename__ = 'Payments'
+    payment_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    card_number = db.Column(db.String(20))
+    expiry_date = db.Column(db.String(10))
+    cvv = db.Column(db.String(4))
+
+    user = db.relationship('User', backref='payments')

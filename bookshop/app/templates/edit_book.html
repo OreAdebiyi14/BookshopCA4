@@ -10,4 +10,7 @@
     <div class="mb-3">{{ form.description.label }}{{ form.description(class="form-control", rows="3") }}</div>
     {{ form.submit(class="btn btn-primary") }}
 </form>
-<div class="mt-
+<div class="mt-4">
+    <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">← Return to Home</a>
+</div>  
+{% endblock %}
